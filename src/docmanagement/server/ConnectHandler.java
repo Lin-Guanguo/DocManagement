@@ -16,8 +16,8 @@ import java.sql.Timestamp;
 
 public class ConnectHandler implements Runnable {
     private final Socket socket;
-    private InputStream in = null;
-    private OutputStream out = null;
+    private InputStream socketIn = null;
+    private OutputStream socketOut = null;
     private AbstractRequest request = null;
     private final ServerData serverData;
 
@@ -30,9 +30,9 @@ public class ConnectHandler implements Runnable {
     public void run() {
         try{
             socket.setSoTimeout(10000); //IO堵塞超时设置
-            in = socket.getInputStream();
-            out = socket.getOutputStream();
-            var objectInputStream = new ObjectInputStream(in);
+            socketIn = socket.getInputStream();
+            socketOut = socket.getOutputStream();
+            var objectInputStream = new ObjectInputStream(socketIn);
             Object obj;
             try{
                 obj = objectInputStream.readObject();
@@ -89,7 +89,7 @@ public class ConnectHandler implements Runnable {
     }
 
     private void writeObjects(Object... objects) throws IOException {
-        var objectOutputStream = new ObjectOutputStream(out);
+        var objectOutputStream = new ObjectOutputStream(socketOut);
         for(var obj : objects){
             objectOutputStream.writeObject(obj);
         }
@@ -167,12 +167,12 @@ public class ConnectHandler implements Runnable {
                 final int bufSize = 1<<10;
                 byte[] buf = new byte[bufSize];
                 while(totalLen > bufSize){
-                    in.readNBytes(buf, 0, bufSize);
+                    socketIn.readNBytes(buf, 0, bufSize);
                     fileOut.write(buf);
                     totalLen -= bufSize;
                 }
                 if(totalLen > 0){
-                    in.readNBytes(buf, 0, (int)totalLen);
+                    socketIn.readNBytes(buf, 0, (int)totalLen);
                     fileOut.write(buf, 0, (int)totalLen);
                 }
             }
@@ -195,7 +195,7 @@ public class ConnectHandler implements Runnable {
                     byte[] buf = new byte[1<<10];
                     int len;
                     while((len = input.read(buf)) != -1){
-                        out.write(buf, 0, len);
+                        socketOut.write(buf, 0, len);
                     }
                 };
             }else{

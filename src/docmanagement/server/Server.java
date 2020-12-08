@@ -13,7 +13,7 @@ public class Server {
     public static final int PORT;
     public static final String FILE_PATH;
 
-    public static final int CONNECT_THREAD_NUMBER = Runtime.getRuntime().availableProcessors() + 1;
+    public static final int CONNECT_THREAD_NUMBER = 8 * Runtime.getRuntime().availableProcessors();
     public static final int QUEUE_CONNECT_NUMBER = 8 * CONNECT_THREAD_NUMBER;
 
     static {

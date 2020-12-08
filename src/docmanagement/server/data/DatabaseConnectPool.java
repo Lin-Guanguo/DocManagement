@@ -25,10 +25,10 @@ import java.util.logging.Logger;
  * 缓存数据库连接，60~120秒未使用则关闭
  */
 public class DatabaseConnectPool implements DataSource {
-    static final String driver;
-    static final String url;
-    static final String name;
-    static final String password;
+    static final String DATABASE_DRIVER;
+    static final String DATABASE_URL;
+    static final String DATABASE_NAME;
+    static final String DATABASE_PASSWORD;
 
     private static final long CACHED_LIVE_TIME = 60000;
     private static final int MAX_CONNECTION = Server.CONNECT_THREAD_NUMBER;
@@ -41,13 +41,13 @@ public class DatabaseConnectPool implements DataSource {
             e.printStackTrace();
             System.exit(-1);
         }
-        driver = properties.getProperty("driver");
-        url = properties.getProperty("url");
-        name = properties.getProperty("name");
-        password = properties.getProperty("password");
+        DATABASE_DRIVER = properties.getProperty("driver");
+        DATABASE_URL = properties.getProperty("url");
+        DATABASE_NAME = properties.getProperty("name");
+        DATABASE_PASSWORD = properties.getProperty("password");
 
         try {
-            Class.forName(driver);
+            Class.forName(DATABASE_DRIVER);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             System.exit(-1);
@@ -103,7 +103,7 @@ public class DatabaseConnectPool implements DataSource {
                 usingConnectionCount.incrementAndGet();
                 //LOG
                 System.out.println("创建一个数据库连接, 现有连接数: " + usingConnectionCount);
-                return DriverManager.getConnection(url, name, password);
+                return DriverManager.getConnection(DATABASE_URL, DATABASE_NAME, DATABASE_PASSWORD);
             }else{
                 cachedConnection = cachedConnectionPool.takeFirst();
                 cachedConnectionCount.decrementAndGet();
