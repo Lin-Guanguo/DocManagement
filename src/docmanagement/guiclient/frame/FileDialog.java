@@ -1,5 +1,10 @@
 package docmanagement.guiclient.frame;
 
+import docmanagement.guiclient.GUIClient;
+import docmanagement.guiclient.listener.DownloadFileHandler;
+import docmanagement.guiclient.listener.FileHandler;
+import docmanagement.guiclient.listener.UploadFileHandler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Path;
@@ -22,26 +27,21 @@ public class FileDialog extends JDialog {
     private final JButton okButton = new JButton("确认");
     private final JButton cancelButton = new JButton("取消");
 
-    private final InputFileHandler inputFileHandler;
+    private FileHandler fileHandler = null;
 
-    private final Type type;
+    private final GUIClient client;
 
-    @FunctionalInterface
-    interface InputFileHandler{
-        void accept(int id, String description, String name, Path path);
-    }
 
     enum Type{
         UPLOAD_FILE, DOWNLOAD_FILE
     }
 
-    public FileDialog(Frame owner, Type type, InputFileHandler okButtonHandler) {
+    public FileDialog(Frame owner, GUIClient client, Type type) {
         super(owner, null, ModalityType.APPLICATION_MODAL);
-        this.inputFileHandler = okButtonHandler;
-        this.type = type;
-        iniType();
-        iniLayout();
-        iniListener();
+        this.client = client;
+        iniType(type);
+        iniLayout(type);
+        iniListener(type);
     }
 
     public void display(){
@@ -51,18 +51,20 @@ public class FileDialog extends JDialog {
         this.setVisible(true);
     }
 
-    public void iniType(){
+    public void iniType(Type type){
         switch (type){
             case UPLOAD_FILE ->{
                 this.setTitle("上传文件");
+                fileHandler = new UploadFileHandler(client, this);
             }
             case DOWNLOAD_FILE -> {
                 this.setTitle("下载文件");
+                fileHandler = new DownloadFileHandler(client, this);
             }
         }
     }
 
-    private void iniLayout(){
+    private void iniLayout(Type type){
         this.setLayout(new GridBagLayout());
 
         JLabel[] labels = null;
@@ -118,18 +120,27 @@ public class FileDialog extends JDialog {
         );
     }
 
-    private void iniListener(){
-        pathButton.addActionListener(event->{
-            var fc = new JFileChooser();
-            int state = -1;
-            switch (type){
-                case UPLOAD_FILE -> state = fc.showOpenDialog(this);
-                case DOWNLOAD_FILE -> state = fc.showSaveDialog(this);
+    private void iniListener(Type type){
+        switch (type){
+            case UPLOAD_FILE -> {
+                pathButton.addActionListener(event -> {
+                    var fc = new JFileChooser();
+                    var state = fc.showOpenDialog(this);
+                    if (state == JFileChooser.APPROVE_OPTION) {
+                        pathField.setText(fc.getSelectedFile().toString());
+                    }
+                });
             }
-            if(state == JFileChooser.APPROVE_OPTION){
-                pathField.setText(fc.getSelectedFile().toString());
+            case DOWNLOAD_FILE -> {
+                pathButton.addActionListener(event -> {
+                    var fc = new JFileChooser();
+                    var state = fc.showSaveDialog(this);
+                    if (state == JFileChooser.APPROVE_OPTION) {
+                        pathField.setText(fc.getSelectedFile().toString());
+                    }
+                });
             }
-        });
+        }
 
         cancelButton.addActionListener(event->{
             this.setVisible(false);
@@ -139,8 +150,7 @@ public class FileDialog extends JDialog {
             try{
                 int id = Integer.parseInt(idField.getText());
                 if(id < 0) throw new NumberFormatException();
-                this.setVisible(false);
-                inputFileHandler.accept(id,
+                fileHandler.acceptFile(id,
                         DescriptionField.getText(),
                         fileNameField.getText(),
                         Path.of(pathField.getText()));

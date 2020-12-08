@@ -26,8 +26,6 @@ public class UserDialog extends JDialog {
     private final Consumer<User> okButtonListener;
     private final Runnable cancelButtonListener;
 
-    private final Type type;
-
     public enum Type{
         ADD_USER, MODIFY_USER, LOGIN
     }
@@ -36,13 +34,12 @@ public class UserDialog extends JDialog {
         super(owner);
         this.okButtonListener = okButtonListener;
         this.cancelButtonListener = cancelButtonListener;
-        this.type = type;
-        iniType();
-        iniLayout();
-        iniListener();
+        iniType(type);
+        iniLayout(type);
+        iniListener(type);
     }
 
-    private void iniType(){
+    private void iniType(Type type){
         switch (type){
             case ADD_USER -> {
                 okButton = new JButton("添加");
@@ -68,7 +65,7 @@ public class UserDialog extends JDialog {
         this.setVisible(true);
     }
 
-    void iniLayout(){
+    void iniLayout(Type type){
         this.setLayout(new GridBagLayout());
 
         this.add(nameLabel,
@@ -126,7 +123,7 @@ public class UserDialog extends JDialog {
         );
     }
 
-    void iniListener(){
+    void iniListener(Type type){
         cancelButton.addActionListener(event->{
             this.setVisible(false);
             if(cancelButtonListener != null){

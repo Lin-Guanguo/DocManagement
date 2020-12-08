@@ -259,51 +259,10 @@ public class OperateFrame extends JFrame {
         var uploadButton = new JButton(ServerOperation.UPLOAD_FILE.show());
         fileManagementButtonPanel.add(uploadButton,
                 new GBC(0,0));
+        uploadFileDialog = new FileDialog(this, client, FileDialog.Type.UPLOAD_FILE);
         uploadButton.addActionListener(event->{
-            if(uploadFileDialog == null){
-                iniUploadFileDialog();
-            }
             uploadFileDialog.display();
         });
-    }
-
-    private void iniUploadFileDialog() {
-        uploadFileDialog = new FileDialog(this, FileDialog.Type.UPLOAD_FILE,
-                (id, description, name, path) -> {
-                    long fileSize;
-                    try {
-                        fileSize = Files.size(path);
-                    } catch (IOException e) {
-                        JOptionPane.showMessageDialog(this,
-                                "文件无法访问", "上传文件", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-                    var toUp = new Doc(id,
-                            client.getUser().getName(),
-                            new Timestamp(System.currentTimeMillis()),
-                            name,
-                            description,
-                            fileSize);
-                    client.connectToServer(new UploadFileRequest(client.getUser(), toUp),
-                            (message, socketIn, socketOut) -> {
-                                if (message.isOk()) {
-                                    try (var input = new BufferedInputStream(Files.newInputStream(path))) {
-                                        byte[] buf = new byte[1 << 10];
-                                        int len;
-                                        while ((len = input.read(buf)) != -1) {
-                                            socketOut.write(buf, 0, len);
-                                        }
-                                    }
-                                    ;
-                                    JOptionPane.showMessageDialog(this,
-                                            "上传成功 " + toUp.getFilename(), "上传文件", JOptionPane.PLAIN_MESSAGE);
-                                    fileTableFlush();
-                                } else {
-                                    JOptionPane.showMessageDialog(this,
-                                            "服务器不接受该文件 " + toUp.getFilename(), "上传文件", JOptionPane.WARNING_MESSAGE);
-                                }
-                            });
-                });
     }
 
     private void downloadFileHandler(){
@@ -311,42 +270,10 @@ public class OperateFrame extends JFrame {
         var downloadButton = new JButton(ServerOperation.DOWNLOAD_FILE.show());
         fileManagementButtonPanel.add(downloadButton,
                 new GBC(1,0));
+        downloadFileDialog = new FileDialog(this, client, FileDialog.Type.DOWNLOAD_FILE);
         downloadButton.addActionListener(event-> {
-            if (downloadFileDialog == null) {
-                iniDownloadFileDialog();
-            }
             downloadFileDialog.display();
         });
-    }
-
-    private void iniDownloadFileDialog(){
-        downloadFileDialog = new FileDialog(this, FileDialog.Type.DOWNLOAD_FILE,
-                (id, description, name, path) -> {
-                    client.connectToServer(new DownloadFileRequest(client.getUser(), id),
-                            (message, socketIn, socketOut) -> {
-                                if (message.isOk()) {
-                                    try (var fileOut = new BufferedOutputStream(Files.newOutputStream(path))) {
-                                        long fileSize = ((DownloadFileMessage) message).getDoc().getFileSize();
-                                        final int bufSize = 1 << 10;
-                                        byte[] buf = new byte[bufSize];
-                                        while (fileSize > bufSize) {
-                                            socketIn.readNBytes(buf, 0, bufSize);
-                                            fileOut.write(buf);
-                                            fileSize -= bufSize;
-                                        }
-                                        if (fileSize > 0) {
-                                            socketIn.readNBytes(buf, 0, (int) fileSize);
-                                            fileOut.write(buf, 0, (int) fileSize);
-                                        }
-                                    }
-                                    JOptionPane.showMessageDialog(this,
-                                            "下载成功 " + ((DownloadFileMessage) message).getDoc().getFilename(), "下载文件", JOptionPane.PLAIN_MESSAGE);
-                                } else {
-                                    JOptionPane.showMessageDialog(this,
-                                            "下载失败 " + ((DownloadFileMessage) message).getDoc().getFilename(), "下载文件", JOptionPane.WARNING_MESSAGE);
-                                }
-                            });
-                });
     }
 
     private void delFileHandler(){
