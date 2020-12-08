@@ -29,27 +29,13 @@ public class GUIClient {
     }
 
     private UserDialog loginFrame = null;
-    private Frame operateFrame = null;
+    private OperateFrame operateFrame = null;
     private User user = null;
     private Set<ServerOperation> permissions = null;
 
     public GUIClient() {
+        loginFrame = new UserDialog(null, this, UserDialog.Type.LOGIN);
         EventQueue.invokeLater(() -> {
-            loginFrame = new UserDialog(null, UserDialog.Type.LOGIN,
-                    user1 ->
-                    {
-                        var message = (LoginCheckMessage) connectToServer(
-                                new LoginCheckRequest(user1));
-                        if (!message.isOk()) {
-                            JOptionPane.showMessageDialog(null, "用户名或密码错误");
-                            EventQueue.invokeLater(() -> loginFrame.setVisible(true));
-                        } else {
-                            loginSucceed(new User(user1.getName(), user1.getPassword(), message.getRole()));
-                        }
-                    },
-                    () -> {
-                        System.exit(0);
-                    });
             loginFrame.setVisible(true);
         });
     }
@@ -114,6 +100,10 @@ public class GUIClient {
 
     public Set<ServerOperation> getPermissions() {
         return permissions;
+    }
+
+    public OperateFrame getOperateFrame() {
+        return operateFrame;
     }
 
     public static void main(String[] args){

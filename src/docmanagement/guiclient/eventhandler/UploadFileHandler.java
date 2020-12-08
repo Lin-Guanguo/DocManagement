@@ -1,4 +1,4 @@
-package docmanagement.guiclient.listener;
+package docmanagement.guiclient.eventhandler;
 
 import docmanagement.guiclient.GUIClient;
 import docmanagement.shared.Doc;
@@ -49,6 +49,7 @@ public class UploadFileHandler implements FileHandler {
                         }
                         JOptionPane.showMessageDialog(owner,
                                 "上传成功 " + toUp.getFilename(), "上传文件", JOptionPane.PLAIN_MESSAGE);
+                        client.getOperateFrame().fileTableFlush();
                         owner.setVisible(false);
                     } else {
                         JOptionPane.showMessageDialog(owner,

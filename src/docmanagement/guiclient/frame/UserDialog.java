@@ -1,5 +1,10 @@
 package docmanagement.guiclient.frame;
 
+import docmanagement.guiclient.GUIClient;
+import docmanagement.guiclient.eventhandler.AddUserHandler;
+import docmanagement.guiclient.eventhandler.DelUserHandler;
+import docmanagement.guiclient.eventhandler.LoginHandler;
+import docmanagement.guiclient.eventhandler.ModifyAllUserHandler;
 import docmanagement.shared.User;
 
 import javax.swing.*;
@@ -19,21 +24,20 @@ public class UserDialog extends JDialog {
 
     private JButton okButton;
     private JButton cancelButton;
-    private final JPanel buttonPanel = new JPanel();
 
     private User.Role choosingRole = User.Role.IGNORE;
 
-    private final Consumer<User> okButtonListener;
-    private final Runnable cancelButtonListener;
+    private Consumer<User> userHandler;
+    private Runnable cancelButtonListener;
+    private final GUIClient client;
 
     public enum Type{
-        ADD_USER, MODIFY_USER, LOGIN
+        ADD_USER, MODIFY_ALL_USER, DEL_USER ,LOGIN
     }
 
-    public UserDialog(Frame owner, Type type, Consumer<User> okButtonListener, Runnable cancelButtonListener) {
+    public UserDialog(Frame owner, GUIClient client, Type type) {
         super(owner);
-        this.okButtonListener = okButtonListener;
-        this.cancelButtonListener = cancelButtonListener;
+        this.client = client;
         iniType(type);
         iniLayout(type);
         iniListener(type);
@@ -45,16 +49,29 @@ public class UserDialog extends JDialog {
                 okButton = new JButton("添加");
                 cancelButton = new JButton("取消");
                 this.setTitle("添加用户");
+                userHandler = new AddUserHandler(client, this);
+                cancelButtonListener = ()->{};
             }
-            case MODIFY_USER -> {
+            case DEL_USER -> {
+                okButton = new JButton("删除");
+                cancelButton = new JButton("取消");
+                this.setTitle("删除用户");
+                userHandler = new DelUserHandler(client, this);
+                cancelButtonListener = ()->{};
+            }
+            case MODIFY_ALL_USER -> {
                 okButton = new JButton("修改");
                 cancelButton = new JButton("取消");
                 this.setTitle("修改用户信息");
+                userHandler = new ModifyAllUserHandler(client, this);
+                cancelButtonListener = ()->{};
             }
             case LOGIN -> {
                 okButton = new JButton("登录");
                 cancelButton = new JButton("退出");
                 this.setTitle("登录档案管理系统");
+                userHandler = new LoginHandler(client, this);
+                cancelButtonListener = ()->System.exit(0);
             }
         }
     }
@@ -72,21 +89,23 @@ public class UserDialog extends JDialog {
                 new GBC(0,0)
                         .setWeight(0,0)
                         .setInsets(DEFAULT_DISTANCE,DEFAULT_DISTANCE));
-        this.add(passwordLabel,
-                new GBC(0,1)
-                        .setWeight(0,0)
-                        .setInsets(DEFAULT_DISTANCE,DEFAULT_DISTANCE));
-
         this.add(nameField,
                 new GBC(1,0,1,1)
                         .setFill(GridBagConstraints.HORIZONTAL)
                         .setInsets(DEFAULT_DISTANCE,0));
-        this.add(passwordField,
-                new GBC(1,1,1,1)
-                        .setFill(GridBagConstraints.HORIZONTAL)
-                        .setInsets(DEFAULT_DISTANCE,0));
 
-        if(type != Type.LOGIN){
+        if(type == Type.ADD_USER || type == Type.LOGIN || type == Type.MODIFY_ALL_USER){
+            this.add(passwordLabel,
+                    new GBC(0,1)
+                            .setWeight(0,0)
+                            .setInsets(DEFAULT_DISTANCE,DEFAULT_DISTANCE));
+            this.add(passwordField,
+                    new GBC(1,1,1,1)
+                            .setFill(GridBagConstraints.HORIZONTAL)
+                            .setInsets(DEFAULT_DISTANCE,0));
+        }
+
+        if(type == Type.ADD_USER || type == Type.MODIFY_ALL_USER){
             var buttonGroup = new ButtonGroup();
             var roleButtonPanel = new JPanel();
             this.add(roleButtonPanel, new GBC(0,2,2,1).setFill(GridBagConstraints.BOTH));
@@ -110,6 +129,7 @@ public class UserDialog extends JDialog {
             };
         }
 
+        var buttonPanel = new JPanel();
         this.add(buttonPanel, new GBC(0,3,2,1).setFill(GridBagConstraints.BOTH));
         buttonPanel.setLayout(new GridBagLayout());
         buttonPanel.add(okButton, new GBC(0,0).setInsets(0,DEFAULT_DISTANCE));
@@ -126,19 +146,14 @@ public class UserDialog extends JDialog {
     void iniListener(Type type){
         cancelButton.addActionListener(event->{
             this.setVisible(false);
-            if(cancelButtonListener != null){
-                cancelButtonListener.run();
-            }
+            cancelButtonListener.run();
         });
         okButton.addActionListener(event->{
-            this.setVisible(false);
             User readUser = new User(
                     nameField.getText(),
                     passwordField.getText(),
                     choosingRole);
-            if(okButtonListener != null){
-                okButtonListener.accept(readUser);
-            }
+            userHandler.accept(readUser);
         });
     }
 }

@@ -1,4 +1,4 @@
-package docmanagement.guiclient.listener;
+package docmanagement.guiclient.eventhandler;
 
 import docmanagement.guiclient.GUIClient;
 import docmanagement.shared.requestandmessage.DownloadFileMessage;

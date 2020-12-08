@@ -1,14 +1,10 @@
 package docmanagement.guiclient.frame;
 
 import docmanagement.guiclient.GUIClient;
-import docmanagement.shared.Doc;
 import docmanagement.shared.requestandmessage.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
-import java.nio.file.Files;
-import java.sql.Timestamp;
 
 public class OperateFrame extends JFrame {
     public static final int DEFAULT_WIDTH = 600;
@@ -16,6 +12,27 @@ public class OperateFrame extends JFrame {
     public static final int DEFAULT_DISTANCE = 10;
 
     JTabbedPane tabbedPane = new JTabbedPane();
+
+    private final JPanel personalInfoPanel = new JPanel();
+    private final JPanel personalInfoButtonPanel = new JPanel();
+
+    private JPanel userManagementPanel = null;
+    private JPanel userManagementButtonPanel = null;
+    private UserDialog addUserDialog  = null;
+    private UserDialog modifyAllUserDialog = null;
+    private UserDialog delUserDialog = null;
+    private ManagementTable userTable = null;
+    private JButton userTableFlushButton = null;
+
+    private JPanel fileManagementPanel = null;
+    private JPanel fileManagementButtonPanel = null;
+    private FileDialog uploadFileDialog = null;
+    private FileDialog downloadFileDialog = null;
+    private FileDialog delFileDialog = null;
+    private ManagementTable fileTable = null;
+    private JButton fileTableFlushButton = null;
+
+
 
     private final GUIClient client;
 
@@ -57,14 +74,6 @@ public class OperateFrame extends JFrame {
             }
         });
     }
-
-    private final JPanel personalInfoPanel = new JPanel();
-    private final JPanel personalInfoButtonPanel = new JPanel();
-
-    private UserDialog addUserDialog  = null;
-    private UserDialog modifyAllUserDialog = null;
-    private ManagementTable userTable = null;
-    private JButton userTableFlushButton = null;
 
     private void createPersonalInfoPanel(){
         var contentPanel = new JPanel();
@@ -113,8 +122,7 @@ public class OperateFrame extends JFrame {
         });
     }
 
-    private JPanel userManagementPanel = null;
-    private JPanel userManagementButtonPanel = null;
+
 
     private void createUserManagementPanel(){
         if(userManagementPanel == null){
@@ -137,21 +145,8 @@ public class OperateFrame extends JFrame {
         var addButton = new JButton(ServerOperation.ADD_USER.show());
         userManagementButtonPanel.add(addButton,
                 new GBC(0,0));
-        addButton.addActionListener(event->{
-            if(addUserDialog == null){
-                this.addUserDialog = new UserDialog(this, UserDialog.Type.ADD_USER, toAdd->{
-                    var message = (AddUserMessage)client.connectToServer(
-                            new AddUserRequest(client.getUser(), toAdd));
-                    if(message != null && message.isOk()){
-                        JOptionPane.showMessageDialog(this.getOwner(), "添加成功");
-                        userTableFlush();
-                    }else{
-                        JOptionPane.showMessageDialog(this, "添加失败");
-                    }
-                }, null);
-            }
-            addUserDialog.display();
-        });
+        addUserDialog = new UserDialog(this,client, UserDialog.Type.ADD_USER);
+        addButton.addActionListener(event-> addUserDialog.display());
     }
 
     private void delUserHandler(){
@@ -159,22 +154,8 @@ public class OperateFrame extends JFrame {
         var delButton = new JButton(ServerOperation.DEL_USER.show());
         userManagementButtonPanel.add(delButton,
                 new GBC(1,0));
-        delButton.addActionListener(event->{
-            var name = JOptionPane.showInputDialog(this,
-                    "删除用户的用户名: ",
-                    "删除用户",
-                    JOptionPane.PLAIN_MESSAGE);
-            if(name != null){
-                var message = (DelUserMessage)client.connectToServer(
-                        new DelUserRequest(client.getUser(), name));
-                if(message.isOk()){
-                    JOptionPane.showMessageDialog(this, "删除成功");
-                    userTableFlush();
-                }else{
-                    JOptionPane.showMessageDialog(this, "删除失败");
-                }
-            }
-        });
+        delUserDialog = new UserDialog(this, client, UserDialog.Type.DEL_USER);
+        delButton.addActionListener(event-> delUserDialog.display());
     }
 
     private void modifyAllUserHandler(){
@@ -182,26 +163,8 @@ public class OperateFrame extends JFrame {
         var modifyButton = new JButton(ServerOperation.MODIFY_ALL_USER.show());
         userManagementButtonPanel.add(modifyButton,
                 new GBC(2,0));
-        modifyButton.addActionListener(event->{
-            if(modifyAllUserDialog == null){
-                this.modifyAllUserDialog = new UserDialog(this, UserDialog.Type.MODIFY_USER, toModify->{
-                    var message = (ModifyAllUserMessage)client.connectToServer(
-                            new ModifyAllUserRequest(client.getUser(), toModify));
-                    if(message != null && message.isOk()){
-                        if(toModify.getName().equals(client.getUser().getName()) ){
-                            JOptionPane.showMessageDialog(this.getOwner(), "修改成功, 请重新登陆");
-                            client.switchUser();
-                        }else{
-                            JOptionPane.showMessageDialog(this.getOwner(), "修改成功");
-                            userTableFlush();
-                        }
-                    }else{
-                        JOptionPane.showMessageDialog(this, "添加失败");
-                    }
-                }, null);
-            }
-            modifyAllUserDialog.display();
-        });
+        modifyAllUserDialog = new UserDialog(this, client, UserDialog.Type.MODIFY_ALL_USER);
+        modifyButton.addActionListener(event->modifyAllUserDialog.display());
     }
 
     private void listUserHandler(){
@@ -210,8 +173,7 @@ public class OperateFrame extends JFrame {
         var scrollPane = new JScrollPane(userTable);
         scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "用户信息"));
         userManagementPanel.add(scrollPane,
-                new GBC(0,0)
-                        .setInsets(DEFAULT_DISTANCE)
+                new GBC().setInsets(DEFAULT_DISTANCE)
                         .setFill(GridBagConstraints.BOTH));
 
         userTableFlushButton = new JButton("刷新");
@@ -224,19 +186,11 @@ public class OperateFrame extends JFrame {
         userTableFlushButton.doClick();
     }
 
-    private void userTableFlush(){
+    public void userTableFlush(){
         if(userTableFlushButton != null){
             userTableFlushButton.doClick();
         }
     }
-
-    private JPanel fileManagementPanel = null;
-    private JPanel fileManagementButtonPanel = null;
-
-    private FileDialog uploadFileDialog = null;
-    private FileDialog downloadFileDialog = null;
-    private ManagementTable fileTable = null;
-    private JButton fileTableFlushButton = null;
 
     private void createFileManagementPanel(){
         if(fileManagementPanel == null){
@@ -259,10 +213,9 @@ public class OperateFrame extends JFrame {
         var uploadButton = new JButton(ServerOperation.UPLOAD_FILE.show());
         fileManagementButtonPanel.add(uploadButton,
                 new GBC(0,0));
+
         uploadFileDialog = new FileDialog(this, client, FileDialog.Type.UPLOAD_FILE);
-        uploadButton.addActionListener(event->{
-            uploadFileDialog.display();
-        });
+        uploadButton.addActionListener(event-> uploadFileDialog.display());
     }
 
     private void downloadFileHandler(){
@@ -270,10 +223,9 @@ public class OperateFrame extends JFrame {
         var downloadButton = new JButton(ServerOperation.DOWNLOAD_FILE.show());
         fileManagementButtonPanel.add(downloadButton,
                 new GBC(1,0));
+
         downloadFileDialog = new FileDialog(this, client, FileDialog.Type.DOWNLOAD_FILE);
-        downloadButton.addActionListener(event-> {
-            downloadFileDialog.display();
-        });
+        downloadButton.addActionListener(event-> downloadFileDialog.display());
     }
 
     private void delFileHandler(){
@@ -281,35 +233,8 @@ public class OperateFrame extends JFrame {
         var delFileButton = new JButton(ServerOperation.DEL_FILE.show());
         fileManagementButtonPanel.add(delFileButton,
                 new GBC(2,0));
-        delFileButton.addActionListener(event->{
-            var idString = JOptionPane.showInputDialog(
-                    this,
-                    "删除文件ID: ",
-                    "删除文件",
-                    JOptionPane.PLAIN_MESSAGE);
-            if(idString != null){
-                try{
-                    int id = Integer.parseInt(idString);
-                    if(id < 0) throw new NumberFormatException();
-                    var message = (DelFileMessage)client.connectToServer(
-                            new DelFileRequest(client.getUser(), id));
-                    if(message.isOk()){
-                        JOptionPane.showMessageDialog(this,
-                                "删除成功","删除文件",JOptionPane.PLAIN_MESSAGE);
-                        fileTableFlush();
-                    }else{
-                        JOptionPane.showMessageDialog(this,
-                                "删除失败","删除文件",JOptionPane.WARNING_MESSAGE);
-                    }
-                }catch (NumberFormatException e){
-                    JOptionPane.showMessageDialog(
-                            this,
-                            "id格式错误",
-                            "删除文件",
-                            JOptionPane.WARNING_MESSAGE);
-                }
-            }
-        });
+        delFileDialog = new FileDialog(this, client, FileDialog.Type.DEL_FILE);
+        delFileButton.addActionListener(event-> delFileDialog.display());
     }
 
     private void listFilesHandler(){
@@ -318,8 +243,7 @@ public class OperateFrame extends JFrame {
         var scrollPane = new JScrollPane(fileTable);
         scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),"文件信息"));
         fileManagementPanel.add(scrollPane,
-                new GBC(0,0)
-                        .setInsets(DEFAULT_DISTANCE)
+                new GBC().setInsets(DEFAULT_DISTANCE)
                         .setFill(GridBagConstraints.BOTH));
 
         fileTableFlushButton = new JButton("刷新");
@@ -332,7 +256,7 @@ public class OperateFrame extends JFrame {
         fileTableFlushButton.doClick();
     }
 
-    private void fileTableFlush(){
+    public void fileTableFlush(){
         if(fileTableFlushButton != null){
             fileTableFlushButton.doClick();
         }

@@ -1,9 +1,10 @@
 package docmanagement.guiclient.frame;
 
 import docmanagement.guiclient.GUIClient;
-import docmanagement.guiclient.listener.DownloadFileHandler;
-import docmanagement.guiclient.listener.FileHandler;
-import docmanagement.guiclient.listener.UploadFileHandler;
+import docmanagement.guiclient.eventhandler.DelFileHandler;
+import docmanagement.guiclient.eventhandler.DownloadFileHandler;
+import docmanagement.guiclient.eventhandler.FileHandler;
+import docmanagement.guiclient.eventhandler.UploadFileHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,12 +29,10 @@ public class FileDialog extends JDialog {
     private final JButton cancelButton = new JButton("取消");
 
     private FileHandler fileHandler = null;
-
     private final GUIClient client;
 
-
     enum Type{
-        UPLOAD_FILE, DOWNLOAD_FILE
+        UPLOAD_FILE, DOWNLOAD_FILE, DEL_FILE
     }
 
     public FileDialog(Frame owner, GUIClient client, Type type) {
@@ -61,6 +60,10 @@ public class FileDialog extends JDialog {
                 this.setTitle("下载文件");
                 fileHandler = new DownloadFileHandler(client, this);
             }
+            case DEL_FILE -> {
+                this.setTitle("删除文件");
+                fileHandler = new DelFileHandler(client, this);
+            }
         }
     }
 
@@ -82,6 +85,12 @@ public class FileDialog extends JDialog {
                 textFields = new JTextField[]{
                         idField, pathField};
             }
+            case DEL_FILE -> {
+                labels = new JLabel[]{
+                        idLabel};
+                textFields = new JTextField[]{
+                        idField};
+            }
             default -> System.out.println("ERROR");
         }
 
@@ -97,10 +106,12 @@ public class FileDialog extends JDialog {
                             .setFill(GridBagConstraints.HORIZONTAL));
         }
 
-        this.add(pathButton,
-                new GBC(3,OBJ_COUNT-1)
-                        .setWeight(0,GBC.DEFAULT_WEIGHTY)
-                        .setInsets(DEFAULT_DISTANCE));
+        if(type == Type.UPLOAD_FILE || type == Type.DOWNLOAD_FILE){
+            this.add(pathButton,
+                    new GBC(3,OBJ_COUNT-1)
+                            .setWeight(0,GBC.DEFAULT_WEIGHTY)
+                            .setInsets(DEFAULT_DISTANCE));
+        }
 
         this.add(buttonPanel,
                 new GBC(0,OBJ_COUNT,4,1)
@@ -140,6 +151,7 @@ public class FileDialog extends JDialog {
                     }
                 });
             }
+            case DEL_FILE -> {}
         }
 
         cancelButton.addActionListener(event->{
@@ -151,8 +163,8 @@ public class FileDialog extends JDialog {
                 int id = Integer.parseInt(idField.getText());
                 if(id < 0) throw new NumberFormatException();
                 fileHandler.acceptFile(id,
-                        DescriptionField.getText(),
                         fileNameField.getText(),
+                        DescriptionField.getText(),
                         Path.of(pathField.getText()));
             }catch (NumberFormatException e){
                 JOptionPane.showMessageDialog(this,"id格式错误","上传文件", JOptionPane.WARNING_MESSAGE);
