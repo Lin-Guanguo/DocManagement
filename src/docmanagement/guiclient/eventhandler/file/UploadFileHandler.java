@@ -39,7 +39,7 @@ public class UploadFileHandler implements FileHandler {
                 description,
                 fileSize);
 
-        var task = new FileTask("Upload " + id){
+        var task = new FileTask("Upload " + "id: " +id){
             @Override
             protected Void doInBackground() throws Exception {
                 client.connectToServer(new UploadFileRequest(client.getUser(), toUp),

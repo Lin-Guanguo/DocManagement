@@ -197,6 +197,7 @@ public class OperateFrame extends JFrame {
     }
 
     public FileProgress getFileProgressPanel() {
+        createFileProgressPanel();
         return fileProgressPanel;
     }
 

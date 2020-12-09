@@ -27,6 +27,7 @@ public class FileProgress extends JPanel {
             this.cancelButton = cancelButton;
         }
     }
+
     private final ConcurrentLinkedQueue<runningTask> taskList = new ConcurrentLinkedQueue<>();
 
     public FileProgress(){

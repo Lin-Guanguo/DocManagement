@@ -65,13 +65,13 @@ public class GUIClient {
         });
     }
 
-    public AbstractMessage connectToServer(AbstractRequest request){
-        return connectToServer(request, null);
-    }
-
     @FunctionalInterface
     public interface ConnectMoreAction{
         void run(AbstractMessage message, InputStream socketIn, OutputStream socketOut) throws IOException;
+    }
+
+    public AbstractMessage connectToServer(AbstractRequest request){
+        return connectToServer(request, null);
     }
 
     public AbstractMessage connectToServer(AbstractRequest request, ConnectMoreAction doMore){

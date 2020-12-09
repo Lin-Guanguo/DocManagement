@@ -22,7 +22,7 @@ public class DownloadFileHandler implements FileHandler {
 
     @Override
     public void acceptFile(int id, String name, String description, Path path) {
-        var task = new FileTask("Download " + id) {
+        var task = new FileTask("Download " + "id: " +id) {
             @Override
             protected Void doInBackground() throws Exception {
                 client.connectToServer(new DownloadFileRequest(client.getUser(), id),
