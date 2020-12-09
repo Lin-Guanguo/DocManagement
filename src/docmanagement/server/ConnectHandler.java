@@ -72,7 +72,7 @@ public class ConnectHandler implements Runnable {
             }
         } catch (PermissionDeniedException | WrongRequestException | UnknownRequestException e) {
             System.err.println(e.getMessage());
-        } catch (java.net.SocketException e){
+        } catch (java.net.SocketTimeoutException e){
             System.err.println("io堵塞超时");
         } catch (IOException e) {
             System.err.println("socket连接异常");

@@ -162,6 +162,7 @@ public class FileDialog extends JDialog {
             try{
                 int id = Integer.parseInt(idField.getText());
                 if(id < 0) throw new NumberFormatException();
+                client.getOperateFrame().createFileProgressPanel();
                 fileHandler.acceptFile(id,
                         fileNameField.getText(),
                         DescriptionField.getText(),

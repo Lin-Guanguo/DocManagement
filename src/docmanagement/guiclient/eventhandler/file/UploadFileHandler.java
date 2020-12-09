@@ -53,7 +53,9 @@ public class UploadFileHandler implements FileHandler {
                                     while ((len = input.read(buf)) != -1) {
                                         socketOut.write(buf, 0, len);
                                         transmitSize += len;
+
                                         setProgress((int) (100 * transmitSize / fileSize));
+                                        if(isCancelled()) { return; }
                                     }
                                     setProgress(100);
                                 }
@@ -68,44 +70,7 @@ public class UploadFileHandler implements FileHandler {
                 return null;
             }
         };
-        client.getBackgroundExecutor().submitFileTask(task);
+        var future = client.getBackgroundExecutor().submitFileTask(task);
         client.getOperateFrame().getFileProgressPanel().addProgress(task);
     }
-
-    /*@Override
-    public void acceptFile(int id, String name, String description, Path path) {
-        long fileSize;
-        try {
-            fileSize = Files.size(path);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(owner,
-                    "文件无法访问", "上传文件", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        var toUp = new Doc(id,
-                client.getUser().getName(),
-                new Timestamp(System.currentTimeMillis()),
-                name,
-                description,
-                fileSize);
-        client.connectToServer(new UploadFileRequest(client.getUser(), toUp),
-                (message, socketIn, socketOut) -> {
-                    if (message.isOk()) {
-                        try (var input = new BufferedInputStream(Files.newInputStream(path))) {
-                            byte[] buf = new byte[1 << 10];
-                            int len;
-                            while ((len = input.read(buf)) != -1) {
-                                socketOut.write(buf, 0, len);
-                            }
-                        }
-                        JOptionPane.showMessageDialog(owner,
-                                "上传成功 " + toUp.getFilename(), "上传文件", JOptionPane.PLAIN_MESSAGE);
-                        client.getOperateFrame().fileTableFlush();
-                        owner.setVisible(false);
-                    } else {
-                        JOptionPane.showMessageDialog(owner,
-                                "服务器不接受该文件 " + toUp.getFilename(), "上传文件", JOptionPane.WARNING_MESSAGE);
-                    }
-                });
-    }*/
 }

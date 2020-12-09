@@ -4,9 +4,9 @@ import docmanagement.guiclient.background.FileTask;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.LinkedList;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Future;
 
 public class FileProgress extends JPanel {
     public static final int DEFAULT_DISTANCE = 10;
@@ -16,16 +16,18 @@ public class FileProgress extends JPanel {
 
     private final java.util.Timer flushTimer = new java.util.Timer();
 
-    private static class taskAndProgress{
+    private static class runningTask {
         public FileTask task;
         public JProgressBar progressBar;
+        public JButton cancelButton;
 
-        public taskAndProgress(FileTask task, JProgressBar progressBar) {
+        public runningTask(FileTask task, JProgressBar progressBar, JButton cancelButton) {
             this.task = task;
             this.progressBar = progressBar;
+            this.cancelButton = cancelButton;
         }
     }
-    private final ConcurrentLinkedQueue<taskAndProgress> taskList = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<runningTask> taskList = new ConcurrentLinkedQueue<>();
 
     public FileProgress(){
         this.setLayout(new GridBagLayout());
@@ -63,23 +65,25 @@ public class FileProgress extends JPanel {
                         .setInsets(2 * DEFAULT_DISTANCE, 0)
                         .setFill(GridBagConstraints.HORIZONTAL)
         );
-        progressPanel.add(new JButton("取消"),
+        var button = new JButton("取消");
+        progressPanel.add(button,
                 new GBC(3,0)
                         .setWeight(0,0)
         );
+        button.addActionListener(event-> task.cancel(true));
 
-        taskList.add(new taskAndProgress(task, progress));
+        taskList.add(new runningTask(task, progress, button));
     }
 
     private void flush(){
-        taskList.forEach(taskAndProgress -> {
-            var task = taskAndProgress.task;
-            if(task.isDone()){
-                taskList.remove(taskAndProgress);
-            }else{
-                var progress = taskAndProgress.progressBar;
-                EventQueue.invokeLater(()->
-                        progress.setValue(task.getProgress()));
+        taskList.forEach(runningTask -> {
+            var task = runningTask.task;
+            var progress = runningTask.progressBar;
+            EventQueue.invokeLater(()->
+                    progress.setValue(task.getProgress()));
+            if(task.isDone() || task.isCancelled()){
+                taskList.remove(runningTask);
+                EventQueue.invokeLater(()->runningTask.cancelButton.setEnabled(false));
             }
         });
     }

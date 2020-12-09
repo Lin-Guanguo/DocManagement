@@ -213,8 +213,6 @@ public class OperateFrame extends JFrame {
                             .setWeight(100,0)
                             .setInsets(0, DEFAULT_DISTANCE)
                             .setFill(GridBagConstraints.HORIZONTAL));
-
-            createFileProgressPanel();
         }
     }
 

@@ -3,6 +3,7 @@ package docmanagement.guiclient.background;
 import docmanagement.guiclient.GUIClient;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class BackgroundExecutor {
@@ -14,7 +15,7 @@ public class BackgroundExecutor {
         this.client = client;
     }
 
-    public void submitFileTask(FileTask task){
-        backgroundThreadPool.submit(task::doInBackground);
+    public Future<?> submitFileTask(FileTask task){
+        return backgroundThreadPool.submit(task::execute);
     }
 }
