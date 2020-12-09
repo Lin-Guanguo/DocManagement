@@ -9,8 +9,8 @@ public enum ServerOperation implements Operation {
     LIST_FILE("展示文件列表"),
     ADD_USER("添加用户"),
     DEL_USER("删除用户"),
-    MODIFY_USER("修改密码"),
-    MODIFY_ALL_USER("修改用户信息"),
+    CHANGE_PASSWORD("修改密码"),
+    MODIFY_USER("修改用户信息"),
     LIST_USER("展示用户列表"),
 
 

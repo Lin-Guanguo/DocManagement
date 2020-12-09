@@ -63,8 +63,8 @@ public class OperateFrame extends JFrame {
                 case GET_PERMISSION ->{}
                 case ADD_USER -> addUserHandler();
                 case DEL_USER -> delUserHandler();
-                case MODIFY_ALL_USER -> modifyAllUserHandler();
                 case MODIFY_USER -> modifyUserHandler();
+                case CHANGE_PASSWORD -> ChangePasswordHandler();
                 case LIST_USER -> listUserHandler();
                 case UPLOAD_FILE -> uploadFileHandler();
                 case DOWNLOAD_FILE -> downloadFileHandler();
@@ -104,14 +104,14 @@ public class OperateFrame extends JFrame {
         personalInfoButtonPanel.add(switchUserButton, new GBC(4,0));
     }
 
-    private void modifyUserHandler(){
+    private void ChangePasswordHandler(){
         var modifyPasswordButton = new JButton("修改密码");
         personalInfoButtonPanel.add(modifyPasswordButton, new GBC(0,0));
         modifyPasswordButton.addActionListener(event->{
             var newPassword = JOptionPane.showInputDialog(this, "新密码","修改密码", JOptionPane.PLAIN_MESSAGE);
             if(newPassword != null){
-                var message = (ModifyUserMessage)client.connectToServer(
-                        new ModifyUserRequest(client.getUser(), newPassword));
+                var message = (ChangePasswordMessage)client.connectToServer(
+                        new ChangePasswordRequest(client.getUser(), newPassword));
                 if(message != null && message.isOk()){
                     JOptionPane.showMessageDialog(this.getOwner(), "修改成功, 请重新登陆");
                     client.switchUser();
@@ -158,9 +158,9 @@ public class OperateFrame extends JFrame {
         delButton.addActionListener(event-> delUserDialog.display());
     }
 
-    private void modifyAllUserHandler(){
+    private void modifyUserHandler(){
         createUserManagementPanel();
-        var modifyButton = new JButton(ServerOperation.MODIFY_ALL_USER.show());
+        var modifyButton = new JButton(ServerOperation.MODIFY_USER.show());
         userManagementButtonPanel.add(modifyButton,
                 new GBC(2,0));
         modifyAllUserDialog = new UserDialog(this, client, UserDialog.Type.MODIFY_ALL_USER);

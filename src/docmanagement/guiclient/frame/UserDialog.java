@@ -4,7 +4,7 @@ import docmanagement.guiclient.GUIClient;
 import docmanagement.guiclient.eventhandler.user.AddUserHandler;
 import docmanagement.guiclient.eventhandler.user.DelUserHandler;
 import docmanagement.guiclient.eventhandler.user.LoginHandler;
-import docmanagement.guiclient.eventhandler.user.ModifyAllUserHandler;
+import docmanagement.guiclient.eventhandler.user.ModifyUserHandler;
 import docmanagement.shared.User;
 
 import javax.swing.*;
@@ -63,7 +63,7 @@ public class UserDialog extends JDialog {
                 okButton = new JButton("修改");
                 cancelButton = new JButton("取消");
                 this.setTitle("修改用户信息");
-                userHandler = new ModifyAllUserHandler(client, this);
+                userHandler = new ModifyUserHandler(client, this);
                 cancelButtonListener = ()->{};
             }
             case LOGIN -> {

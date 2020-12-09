@@ -3,11 +3,11 @@ package docmanagement.shared.requestandmessage;
 import docmanagement.shared.User;
 
 public class ModifyUserRequest extends AbstractRequest {
-    private final String password;
+    private final User toModify;
 
-    public ModifyUserRequest(User user, String password) {
+    public ModifyUserRequest(User user, User toModify) {
         super(user);
-        this.password = password;
+        this.toModify = toModify;
     }
 
     @Override
@@ -15,7 +15,7 @@ public class ModifyUserRequest extends AbstractRequest {
         return ServerOperation.MODIFY_USER;
     }
 
-    public String getNewPassword() {
-        return password;
+    public User getToModify() {
+        return toModify;
     }
 }

@@ -109,9 +109,9 @@ public class CommandLineClient {
             case UPLOAD_FILE -> uploadFileHandler();
             case DOWNLOAD_FILE -> downloadFileHandler();
             case DEL_FILE -> delFileHandler();
-            case MODIFY_USER -> {
+            case CHANGE_PASSWORD -> {
                 return modifyUserHandler();}
-            case MODIFY_ALL_USER -> {
+            case MODIFY_USER -> {
                 return modifyAllUserHandler(); }
             case LIST_FILE -> listFilesHandler();
             default -> {
@@ -186,8 +186,8 @@ public class CommandLineClient {
     private boolean modifyUserHandler() throws ServerMessageException, SocketException {
         cmdOut.println("请输入新密码: ");
         var newPassword = scannerCmdIn.nextLine();
-        var message = (ModifyUserMessage)connectToServer(
-                new ModifyUserRequest(
+        var message = (ChangePasswordMessage)connectToServer(
+                new ChangePasswordRequest(
                         user, newPassword));
         if(message.isOk()){
             System.out.println("修改成功, 请重新登陆");
@@ -200,8 +200,8 @@ public class CommandLineClient {
 
     private boolean modifyAllUserHandler() throws ServerMessageException, SocketException{
         var toModify = readUser(true);
-        var message = (ModifyAllUserMessage)connectToServer(
-                new ModifyAllUserRequest(
+        var message = (ModifyUserMessage)connectToServer(
+                new ModifyUserRequest(
                         user, toModify));
         if(message.isOk()){
             System.out.println("修改成功");

@@ -62,8 +62,8 @@ public class ConnectHandler implements Runnable {
                 case UPLOAD_FILE -> uploadFileHandler();
                 case DOWNLOAD_FILE -> downloadFileHandler();
                 case DEL_FILE -> delFileHandler();
+                case CHANGE_PASSWORD -> ChangePasswordHandler();
                 case MODIFY_USER -> modifyUserHandler();
-                case MODIFY_ALL_USER -> modifyAllUserHandler();
                 case LIST_FILE -> listFilesHandler();
                 default -> {
                     writeObjects(new UnknownRequestExceptionMessage());
@@ -133,21 +133,21 @@ public class ConnectHandler implements Runnable {
         writeObjects(new DelUserMessage(delUser != null, delUser));
     }
 
-    private void modifyUserHandler() throws IOException, SQLException {
-        var concreteRequest = (ModifyUserRequest)request;
+    private void ChangePasswordHandler() throws IOException, SQLException {
+        var concreteRequest = (ChangePasswordRequest)request;
         var user = concreteRequest.getUser();
         var newPassword = concreteRequest.getNewPassword();
         var isOk = serverData.modifyUser(
                 new User(user.getName(), newPassword, user.getRole()));
-        writeObjects(new ModifyUserMessage(isOk));
+        writeObjects(new ChangePasswordMessage(isOk));
     }
 
-    private void modifyAllUserHandler() throws IOException, SQLException {
-        var concreteRequest = (ModifyAllUserRequest)request;
+    private void modifyUserHandler() throws IOException, SQLException {
+        var concreteRequest = (ModifyUserRequest)request;
         var user = concreteRequest.getUser();
         var toModify = concreteRequest.getToModify();
         var isOk = serverData.modifyUser(toModify);
-        writeObjects(new ModifyAllUserMessage(isOk));
+        writeObjects(new ModifyUserMessage(isOk));
     }
 
     private void listUserHandler() throws IOException, SQLException {
