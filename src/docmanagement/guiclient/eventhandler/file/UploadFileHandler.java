@@ -41,8 +41,7 @@ public class UploadFileHandler implements FileHandler {
 
         var task = new FileTask("Upload " + id){
             @Override
-            public Void doInBackground() throws Exception {
-                owner.setVisible(false);
+            protected Void doInBackground() throws Exception {
                 client.connectToServer(new UploadFileRequest(client.getUser(), toUp),
                         (message, socketIn, socketOut) -> {
                             if (message.isOk()) {

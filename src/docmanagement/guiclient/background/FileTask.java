@@ -9,9 +9,6 @@ public abstract class FileTask extends SwingWorker<Void, Integer> {
         this.name = name;
     }
 
-    @Override
-    abstract public Void doInBackground() throws Exception;
-
     public String getName() {
         return name;
     }

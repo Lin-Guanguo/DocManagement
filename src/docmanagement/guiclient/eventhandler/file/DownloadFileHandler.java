@@ -24,8 +24,7 @@ public class DownloadFileHandler implements FileHandler {
     public void acceptFile(int id, String name, String description, Path path) {
         var task = new FileTask("Download " + id) {
             @Override
-            public Void doInBackground() throws Exception {
-                owner.setVisible(false);
+            protected Void doInBackground() throws Exception {
                 client.connectToServer(new DownloadFileRequest(client.getUser(), id),
                         (message, socketIn, socketOut) -> {
                             if (message.isOk()) {
@@ -58,7 +57,7 @@ public class DownloadFileHandler implements FileHandler {
                 return null;
             }
         };
-        var future = client.getBackgroundExecutor().submitFileTask(task);
+        client.getBackgroundExecutor().submitFileTask(task);
         client.getOperateFrame().getFileProgressPanel().addProgress(task);
     }
 }

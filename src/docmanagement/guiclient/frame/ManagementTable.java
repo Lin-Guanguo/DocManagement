@@ -44,6 +44,7 @@ public class ManagementTable extends JTable {
         private List<User> userList = new ArrayList<>();
         private int rowCount = 0;
 
+        @SuppressWarnings("uncheck")
         void update(Collection users){
             rowCount = users.size();
             userList = List.copyOf(users);
