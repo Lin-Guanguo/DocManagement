@@ -1,5 +1,6 @@
 package docmanagement.guiclient;
 
+import docmanagement.guiclient.background.BackgroundExecutor;
 import docmanagement.guiclient.frame.OperateFrame;
 import docmanagement.guiclient.frame.UserDialog;
 import docmanagement.shared.User;
@@ -32,6 +33,7 @@ public class GUIClient {
     private OperateFrame operateFrame = null;
     private User user = null;
     private Set<ServerOperation> permissions = null;
+    private final BackgroundExecutor backgroundExecutor = new BackgroundExecutor(this);
 
     public GUIClient() {
         loginFrame = new UserDialog(null, this, UserDialog.Type.LOGIN);
@@ -104,6 +106,10 @@ public class GUIClient {
 
     public OperateFrame getOperateFrame() {
         return operateFrame;
+    }
+
+    public BackgroundExecutor getBackgroundExecutor() {
+        return backgroundExecutor;
     }
 
     public static void main(String[] args){

@@ -1,6 +1,7 @@
 package docmanagement.guiclient.eventhandler.file;
 
 import docmanagement.guiclient.GUIClient;
+import docmanagement.guiclient.background.FileTask;
 import docmanagement.shared.Doc;
 import docmanagement.shared.requestandmessage.UploadFileRequest;
 
@@ -37,6 +38,56 @@ public class UploadFileHandler implements FileHandler {
                 name,
                 description,
                 fileSize);
+
+        var task = new FileTask("Upload " + id){
+            @Override
+            public Void doInBackground() throws Exception {
+                owner.setVisible(false);
+                client.connectToServer(new UploadFileRequest(client.getUser(), toUp),
+                        (message, socketIn, socketOut) -> {
+                            if (message.isOk()) {
+                                try (var input = new BufferedInputStream(Files.newInputStream(path))) {
+                                    byte[] buf = new byte[1 << 10];
+                                    int len;
+                                    long transmitSize = 0;
+                                    while ((len = input.read(buf)) != -1) {
+                                        socketOut.write(buf, 0, len);
+                                        transmitSize += len;
+                                        setProgress((int) (100 * transmitSize / fileSize));
+                                    }
+                                    setProgress(100);
+                                }
+                                JOptionPane.showMessageDialog(owner,
+                                        "上传成功 " + toUp.getFilename(), "上传文件", JOptionPane.PLAIN_MESSAGE);
+                                client.getOperateFrame().fileTableFlush();
+                            } else {
+                                JOptionPane.showMessageDialog(owner,
+                                        "服务器不接受该文件 " + toUp.getFilename(), "上传文件", JOptionPane.WARNING_MESSAGE);
+                            }
+                        });
+                return null;
+            }
+        };
+        client.getBackgroundExecutor().submitFileTask(task);
+        client.getOperateFrame().getFileProgressPanel().addProgress(task);
+    }
+
+    /*@Override
+    public void acceptFile(int id, String name, String description, Path path) {
+        long fileSize;
+        try {
+            fileSize = Files.size(path);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(owner,
+                    "文件无法访问", "上传文件", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        var toUp = new Doc(id,
+                client.getUser().getName(),
+                new Timestamp(System.currentTimeMillis()),
+                name,
+                description,
+                fileSize);
         client.connectToServer(new UploadFileRequest(client.getUser(), toUp),
                 (message, socketIn, socketOut) -> {
                     if (message.isOk()) {
@@ -56,5 +107,5 @@ public class UploadFileHandler implements FileHandler {
                                 "服务器不接受该文件 " + toUp.getFilename(), "上传文件", JOptionPane.WARNING_MESSAGE);
                     }
                 });
-    }
+    }*/
 }

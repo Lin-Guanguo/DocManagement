@@ -5,6 +5,7 @@ import docmanagement.shared.User;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -46,7 +47,7 @@ public class ManagementTable extends JTable {
         void update(Collection users){
             rowCount = users.size();
             userList = List.copyOf(users);
-            this.fireTableDataChanged();
+            EventQueue.invokeLater(this::fireTableDataChanged);
         }
 
         @Override

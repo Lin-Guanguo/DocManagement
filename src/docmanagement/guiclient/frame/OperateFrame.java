@@ -11,7 +11,7 @@ public class OperateFrame extends JFrame {
     public static final int DEFAULT_HEIGHT= 400;
     public static final int DEFAULT_DISTANCE = 10;
 
-    JTabbedPane tabbedPane = new JTabbedPane();
+    private final JTabbedPane tabbedPane = new JTabbedPane();
 
     private final JPanel personalInfoPanel = new JPanel();
     private final JPanel personalInfoButtonPanel = new JPanel();
@@ -26,13 +26,12 @@ public class OperateFrame extends JFrame {
 
     private JPanel fileManagementPanel = null;
     private JPanel fileManagementButtonPanel = null;
+    private FileProgress fileProgressPanel = null;
     private FileDialog uploadFileDialog = null;
     private FileDialog downloadFileDialog = null;
     private FileDialog delFileDialog = null;
     private ManagementTable fileTable = null;
     private JButton fileTableFlushButton = null;
-
-
 
     private final GUIClient client;
 
@@ -122,8 +121,6 @@ public class OperateFrame extends JFrame {
         });
     }
 
-
-
     private void createUserManagementPanel(){
         if(userManagementPanel == null){
             userManagementPanel = new JPanel();
@@ -172,12 +169,12 @@ public class OperateFrame extends JFrame {
         userTable = new ManagementTable(ManagementTable.TableType.USER_TABLE);
         var scrollPane = new JScrollPane(userTable);
         scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "用户信息"));
-        userManagementPanel.add(scrollPane,
-                new GBC().setInsets(DEFAULT_DISTANCE)
+        userManagementPanel.add(scrollPane, new GBC().setInsets(DEFAULT_DISTANCE)
                         .setFill(GridBagConstraints.BOTH));
 
         userTableFlushButton = new JButton("刷新");
-        userManagementButtonPanel.add(userTableFlushButton, new GBC(4,0));
+        userManagementButtonPanel.add(userTableFlushButton,
+                new GBC(4,0));
         userTableFlushButton.addActionListener(event ->{
             var message = (ListUserMessage)client.connectToServer(
                     new ListUserRequest(client.getUser()));
@@ -190,6 +187,17 @@ public class OperateFrame extends JFrame {
         if(userTableFlushButton != null){
             userTableFlushButton.doClick();
         }
+    }
+
+    public void createFileProgressPanel(){
+        if(fileProgressPanel == null){
+            fileProgressPanel = new FileProgress();
+            tabbedPane.addTab("传输进度", fileProgressPanel);
+        }
+    }
+
+    public FileProgress getFileProgressPanel() {
+        return fileProgressPanel;
     }
 
     private void createFileManagementPanel(){
@@ -205,6 +213,8 @@ public class OperateFrame extends JFrame {
                             .setWeight(100,0)
                             .setInsets(0, DEFAULT_DISTANCE)
                             .setFill(GridBagConstraints.HORIZONTAL));
+
+            createFileProgressPanel();
         }
     }
 
@@ -213,7 +223,6 @@ public class OperateFrame extends JFrame {
         var uploadButton = new JButton(ServerOperation.UPLOAD_FILE.show());
         fileManagementButtonPanel.add(uploadButton,
                 new GBC(0,0));
-
         uploadFileDialog = new FileDialog(this, client, FileDialog.Type.UPLOAD_FILE);
         uploadButton.addActionListener(event-> uploadFileDialog.display());
     }
@@ -223,7 +232,6 @@ public class OperateFrame extends JFrame {
         var downloadButton = new JButton(ServerOperation.DOWNLOAD_FILE.show());
         fileManagementButtonPanel.add(downloadButton,
                 new GBC(1,0));
-
         downloadFileDialog = new FileDialog(this, client, FileDialog.Type.DOWNLOAD_FILE);
         downloadButton.addActionListener(event-> downloadFileDialog.display());
     }
