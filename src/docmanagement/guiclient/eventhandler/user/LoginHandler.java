@@ -1,4 +1,4 @@
-package docmanagement.guiclient.eventhandler;
+package docmanagement.guiclient.eventhandler.user;
 
 import docmanagement.guiclient.GUIClient;
 import docmanagement.shared.User;

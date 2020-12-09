@@ -1,4 +1,4 @@
-package docmanagement.guiclient.eventhandler;
+package docmanagement.guiclient.eventhandler.file;
 
 import java.nio.file.Path;
 

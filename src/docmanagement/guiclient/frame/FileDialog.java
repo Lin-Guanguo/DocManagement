@@ -1,10 +1,10 @@
 package docmanagement.guiclient.frame;
 
 import docmanagement.guiclient.GUIClient;
-import docmanagement.guiclient.eventhandler.DelFileHandler;
-import docmanagement.guiclient.eventhandler.DownloadFileHandler;
-import docmanagement.guiclient.eventhandler.FileHandler;
-import docmanagement.guiclient.eventhandler.UploadFileHandler;
+import docmanagement.guiclient.eventhandler.file.DelFileHandler;
+import docmanagement.guiclient.eventhandler.file.DownloadFileHandler;
+import docmanagement.guiclient.eventhandler.file.FileHandler;
+import docmanagement.guiclient.eventhandler.file.UploadFileHandler;
 
 import javax.swing.*;
 import java.awt.*;

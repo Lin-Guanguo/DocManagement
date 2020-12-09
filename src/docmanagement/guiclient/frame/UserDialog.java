@@ -1,10 +1,10 @@
 package docmanagement.guiclient.frame;
 
 import docmanagement.guiclient.GUIClient;
-import docmanagement.guiclient.eventhandler.AddUserHandler;
-import docmanagement.guiclient.eventhandler.DelUserHandler;
-import docmanagement.guiclient.eventhandler.LoginHandler;
-import docmanagement.guiclient.eventhandler.ModifyAllUserHandler;
+import docmanagement.guiclient.eventhandler.user.AddUserHandler;
+import docmanagement.guiclient.eventhandler.user.DelUserHandler;
+import docmanagement.guiclient.eventhandler.user.LoginHandler;
+import docmanagement.guiclient.eventhandler.user.ModifyAllUserHandler;
 import docmanagement.shared.User;
 
 import javax.swing.*;
