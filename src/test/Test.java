@@ -9,11 +9,11 @@ import java.util.concurrent.Executors;
 
 public class Test {
     public static void main(String[] args){
-        EventQueue.invokeLater(()->{
+        /*EventQueue.invokeLater(()->{
             var frame = new TestFrame();
             frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             frame.setVisible(true);
-        });
+        });*/
     }
 }
 
