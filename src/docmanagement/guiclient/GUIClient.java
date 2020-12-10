@@ -1,8 +1,8 @@
 package docmanagement.guiclient;
 
 import docmanagement.guiclient.background.BackgroundExecutor;
+import docmanagement.guiclient.frame.userdialog.LoginDialog;
 import docmanagement.guiclient.frame.OperateFrame;
-import docmanagement.guiclient.frame.UserDialog;
 import docmanagement.shared.User;
 import docmanagement.shared.requestandmessage.*;
 
@@ -29,16 +29,16 @@ public class GUIClient {
         port = Integer.parseInt(properties.getProperty("port"));
     }
 
-    private UserDialog loginFrame = null;
+    private LoginDialog loginFrame = null;
     private OperateFrame operateFrame = null;
     private User user = null;
     private Set<ServerOperation> permissions = null;
     private final BackgroundExecutor backgroundExecutor = new BackgroundExecutor(this);
 
     public GUIClient() {
-        loginFrame = new UserDialog(null, this, UserDialog.Type.LOGIN);
+        loginFrame = new LoginDialog(this);
         EventQueue.invokeLater(() -> {
-            loginFrame.setVisible(true);
+            loginFrame.display();
         });
     }
 

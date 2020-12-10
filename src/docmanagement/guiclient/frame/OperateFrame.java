@@ -1,6 +1,13 @@
 package docmanagement.guiclient.frame;
 
 import docmanagement.guiclient.GUIClient;
+import docmanagement.guiclient.frame.filedialog.DelFileDialog;
+import docmanagement.guiclient.frame.filedialog.DownloadFileDialog;
+import docmanagement.guiclient.frame.filedialog.UploadFileDialog;
+import docmanagement.guiclient.frame.userdialog.AddUserDialog;
+import docmanagement.guiclient.frame.userdialog.ChangePasswordDialog;
+import docmanagement.guiclient.frame.userdialog.DelUserDialog;
+import docmanagement.guiclient.frame.userdialog.ModifyUserDialog;
 import docmanagement.shared.requestandmessage.*;
 
 import javax.swing.*;
@@ -18,18 +25,12 @@ public class OperateFrame extends JFrame {
 
     private JPanel userManagementPanel = null;
     private JPanel userManagementButtonPanel = null;
-    private UserDialog addUserDialog  = null;
-    private UserDialog modifyAllUserDialog = null;
-    private UserDialog delUserDialog = null;
     private ManagementTable userTable = null;
     private JButton userTableFlushButton = null;
 
     private JPanel fileManagementPanel = null;
     private JPanel fileManagementButtonPanel = null;
     private FileProgress fileProgressPanel = null;
-    private FileDialog uploadFileDialog = null;
-    private FileDialog downloadFileDialog = null;
-    private FileDialog delFileDialog = null;
     private ManagementTable fileTable = null;
     private JButton fileTableFlushButton = null;
 
@@ -106,19 +107,8 @@ public class OperateFrame extends JFrame {
     private void ChangePasswordHandler(){
         var modifyPasswordButton = new JButton("修改密码");
         personalInfoButtonPanel.add(modifyPasswordButton, new GBC(0,0));
-        modifyPasswordButton.addActionListener(event->{
-            var newPassword = JOptionPane.showInputDialog(this, "新密码","修改密码", JOptionPane.PLAIN_MESSAGE);
-            if(newPassword != null){
-                var message = (ChangePasswordMessage)client.connectToServer(
-                        new ChangePasswordRequest(client.getUser(), newPassword));
-                if(message != null && message.isOk()){
-                    JOptionPane.showMessageDialog(this.getOwner(), "修改成功, 请重新登陆");
-                    client.switchUser();
-                }else{
-                    JOptionPane.showMessageDialog(this, "修改失败");
-                }
-            }
-        });
+        var changePasswordDialog = new ChangePasswordDialog(client);
+        modifyPasswordButton.addActionListener(e -> changePasswordDialog.display());
     }
 
     private void createUserManagementPanel(){
@@ -142,7 +132,7 @@ public class OperateFrame extends JFrame {
         var addButton = new JButton(ServerOperation.ADD_USER.show());
         userManagementButtonPanel.add(addButton,
                 new GBC(0,0));
-        addUserDialog = new UserDialog(this,client, UserDialog.Type.ADD_USER);
+        var addUserDialog = new AddUserDialog(client);
         addButton.addActionListener(event-> addUserDialog.display());
     }
 
@@ -150,8 +140,8 @@ public class OperateFrame extends JFrame {
         createUserManagementPanel();
         var delButton = new JButton(ServerOperation.DEL_USER.show());
         userManagementButtonPanel.add(delButton,
-                new GBC(1,0));
-        delUserDialog = new UserDialog(this, client, UserDialog.Type.DEL_USER);
+                new GBC(GridBagConstraints.RELATIVE,0));
+        var delUserDialog = new DelUserDialog(client);
         delButton.addActionListener(event-> delUserDialog.display());
     }
 
@@ -159,8 +149,8 @@ public class OperateFrame extends JFrame {
         createUserManagementPanel();
         var modifyButton = new JButton(ServerOperation.MODIFY_USER.show());
         userManagementButtonPanel.add(modifyButton,
-                new GBC(2,0));
-        modifyAllUserDialog = new UserDialog(this, client, UserDialog.Type.MODIFY_ALL_USER);
+                new GBC(GridBagConstraints.RELATIVE,0));
+        var modifyAllUserDialog = new ModifyUserDialog(client);
         modifyButton.addActionListener(event->modifyAllUserDialog.display());
     }
 
@@ -174,7 +164,7 @@ public class OperateFrame extends JFrame {
 
         userTableFlushButton = new JButton("刷新");
         userManagementButtonPanel.add(userTableFlushButton,
-                new GBC(4,0));
+                new GBC(GridBagConstraints.RELATIVE,0));
         userTableFlushButton.addActionListener(event ->{
             var message = (ListUserMessage)client.connectToServer(
                     new ListUserRequest(client.getUser()));
@@ -222,7 +212,7 @@ public class OperateFrame extends JFrame {
         var uploadButton = new JButton(ServerOperation.UPLOAD_FILE.show());
         fileManagementButtonPanel.add(uploadButton,
                 new GBC(0,0));
-        uploadFileDialog = new FileDialog(this, client, FileDialog.Type.UPLOAD_FILE);
+        var uploadFileDialog = new UploadFileDialog(client);
         uploadButton.addActionListener(event-> uploadFileDialog.display());
     }
 
@@ -231,7 +221,7 @@ public class OperateFrame extends JFrame {
         var downloadButton = new JButton(ServerOperation.DOWNLOAD_FILE.show());
         fileManagementButtonPanel.add(downloadButton,
                 new GBC(1,0));
-        downloadFileDialog = new FileDialog(this, client, FileDialog.Type.DOWNLOAD_FILE);
+        var downloadFileDialog = new DownloadFileDialog(client);
         downloadButton.addActionListener(event-> downloadFileDialog.display());
     }
 
@@ -240,7 +230,7 @@ public class OperateFrame extends JFrame {
         var delFileButton = new JButton(ServerOperation.DEL_FILE.show());
         fileManagementButtonPanel.add(delFileButton,
                 new GBC(2,0));
-        delFileDialog = new FileDialog(this, client, FileDialog.Type.DEL_FILE);
+        var delFileDialog = new DelFileDialog(client);
         delFileButton.addActionListener(event-> delFileDialog.display());
     }
 
