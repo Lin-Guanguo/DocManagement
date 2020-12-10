@@ -2,7 +2,7 @@ package docmanagement.guiclient.frame.filedialog;
 
 import docmanagement.guiclient.GUIClient;
 import docmanagement.guiclient.background.FileTask;
-import docmanagement.guiclient.frame.DialogBuilder;
+import docmanagement.guiclient.frame.tool.DialogBuilder;
 import docmanagement.shared.Doc;
 import docmanagement.shared.requestandmessage.UploadFileRequest;
 

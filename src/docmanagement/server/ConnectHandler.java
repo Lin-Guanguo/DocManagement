@@ -1,6 +1,6 @@
 package docmanagement.server;
 
-import docmanagement.server.data.ServerData;
+import docmanagement.server.data.DataProcessing;
 import docmanagement.server.exception.PermissionDeniedException;
 import docmanagement.server.exception.UnknownRequestException;
 import docmanagement.server.exception.WrongRequestException;
@@ -19,11 +19,11 @@ public class ConnectHandler implements Runnable {
     private InputStream socketIn = null;
     private OutputStream socketOut = null;
     private AbstractRequest request = null;
-    private final ServerData serverData;
+    private final DataProcessing dataProcessing;
 
-    public ConnectHandler(Socket socket, ServerData serverData) {
+    public ConnectHandler(Socket socket, DataProcessing dataProcessing) {
         this.socket = socket;
-        this.serverData = serverData;
+        this.dataProcessing = dataProcessing;
     }
 
     @Override
@@ -99,15 +99,15 @@ public class ConnectHandler implements Runnable {
         if(request.getType() == ServerOperation.LOGIN_CHECK){
             return true;
         }
-        var user = serverData.getUser(request.getUser().getName());
+        var user = dataProcessing.getUser(request.getUser().getName());
         return user != null &&
                 user.equals(request.getUser()) &&
-                serverData.getUserPermission(request.getUser().getRole()).contains(request.getType());
+                dataProcessing.getUserPermission(request.getUser().getRole()).contains(request.getType());
     }
 
     private void loginCheckHandler() throws IOException, SQLException {
         var user = request.getUser();
-        var serverUser = serverData.getUser(user.getName());
+        var serverUser = dataProcessing.getUser(user.getName());
         if(serverUser == null || !serverUser.equals(user)){
             writeObjects(new LoginCheckMessage(false, null));
         }else{
@@ -116,20 +116,20 @@ public class ConnectHandler implements Runnable {
     }
 
     private void getPermissionHandler() throws IOException{
-        var pac = new GetPermissionMessage(serverData.getUserPermission(request.getUser().getRole()));
+        var pac = new GetPermissionMessage(dataProcessing.getUserPermission(request.getUser().getRole()));
         writeObjects(pac);
     }
 
     private void addUserHandler() throws IOException, SQLException {
         var concreteRequest = (AddUserRequest)request;
-        boolean ok = serverData.addUser(concreteRequest.getToAdd());
+        boolean ok = dataProcessing.addUser(concreteRequest.getToAdd());
 
         writeObjects(new AddUserMessage(ok));
     }
 
     private void delUserHandler() throws IOException, SQLException {
         var concreteRequest = (DelUserRequest)request;
-        var delUser = serverData.delUser(concreteRequest.getDelUserName());
+        var delUser = dataProcessing.delUser(concreteRequest.getDelUserName());
         writeObjects(new DelUserMessage(delUser != null, delUser));
     }
 
@@ -137,7 +137,7 @@ public class ConnectHandler implements Runnable {
         var concreteRequest = (ChangePasswordRequest)request;
         var user = concreteRequest.getUser();
         var newPassword = concreteRequest.getNewPassword();
-        var isOk = serverData.modifyUser(
+        var isOk = dataProcessing.modifyUser(
                 new User(user.getName(), newPassword, user.getRole()));
         writeObjects(new ChangePasswordMessage(isOk));
     }
@@ -146,18 +146,18 @@ public class ConnectHandler implements Runnable {
         var concreteRequest = (ModifyUserRequest)request;
         var user = concreteRequest.getUser();
         var toModify = concreteRequest.getToModify();
-        var isOk = serverData.modifyUser(toModify);
+        var isOk = dataProcessing.modifyUser(toModify);
         writeObjects(new ModifyUserMessage(isOk));
     }
 
     private void listUserHandler() throws IOException, SQLException {
-        writeObjects(new ListUserMessage(serverData.listUsers()));
+        writeObjects(new ListUserMessage(dataProcessing.listUsers()));
     }
 
     private void uploadFileHandler() throws IOException, SQLException {
         var concreteRequest = (UploadFileRequest)request;
         var doc = concreteRequest.getDoc();
-        if(serverData.addFile(doc)){
+        if(dataProcessing.addFile(doc)){
             writeObjects(new UploadFileMessage(true));
 
             var path = Path.of(Server.FILE_PATH, Integer.toString(doc.getId()));
@@ -184,7 +184,7 @@ public class ConnectHandler implements Runnable {
     private void downloadFileHandler() throws IOException, SQLException {
         var concreteRequest = (DownloadFileRequest)request;
         var id = concreteRequest.getId();
-        var doc = serverData.getFile(id);
+        var doc = dataProcessing.getFile(id);
         if(doc == null){
             writeObjects(new DownloadFileMessage(false, null));
         }else{
@@ -207,7 +207,7 @@ public class ConnectHandler implements Runnable {
 
     private void delFileHandler() throws IOException, SQLException {
         var concreteRequest = (DelFileRequest)request;
-        var delFile = serverData.delFile(concreteRequest.getFileId());
+        var delFile = dataProcessing.delFile(concreteRequest.getFileId());
         if(delFile != null){
             var path = Path.of(Server.FILE_PATH, Integer.toString(delFile.getId()));
             Files.delete(path);
@@ -217,7 +217,7 @@ public class ConnectHandler implements Runnable {
 
     private void listFilesHandler() throws IOException, SQLException {
         writeObjects(new ListFileMessage(
-                serverData.listFile()
+                dataProcessing.listFile()
         ));
     }
 }

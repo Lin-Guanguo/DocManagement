@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 
-public class ServerData {
+public class DataProcessing {
     static private final Map<User.Role, Set<ServerOperation>> userPermission;
 
     static{

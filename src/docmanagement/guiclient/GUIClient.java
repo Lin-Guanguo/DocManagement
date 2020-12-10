@@ -29,7 +29,7 @@ public class GUIClient {
         port = Integer.parseInt(properties.getProperty("port"));
     }
 
-    private LoginDialog loginFrame = null;
+    private final LoginDialog loginFrame;
     private OperateFrame operateFrame = null;
     private User user = null;
     private Set<ServerOperation> permissions = null;
@@ -37,9 +37,7 @@ public class GUIClient {
 
     public GUIClient() {
         loginFrame = new LoginDialog(this);
-        EventQueue.invokeLater(() -> {
-            loginFrame.display();
-        });
+        loginFrame.display();
     }
 
     public void loginSucceed(User user){
@@ -61,7 +59,7 @@ public class GUIClient {
             operateFrame.setVisible(false);
             operateFrame = null;
             user = null;
-            EventQueue.invokeLater(()->loginFrame.setVisible(true));
+            loginFrame.display();
         });
     }
 

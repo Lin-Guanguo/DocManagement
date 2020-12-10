@@ -1,4 +1,4 @@
-package docmanagement.guiclient.frame;
+package docmanagement.guiclient.frame.tool;
 
 import docmanagement.shared.User;
 
@@ -39,7 +39,7 @@ public class DialogBuilder extends JDialog {
                 text.setText("");
             }
         }
-        this.setVisible(true);
+        EventQueue.invokeLater(()->this.setVisible(true));
     }
 
     protected void addLabelAndTextFiled(String label){

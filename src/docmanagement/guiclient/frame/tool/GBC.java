@@ -1,4 +1,4 @@
-package docmanagement.guiclient.frame;
+package docmanagement.guiclient.frame.tool;
 
 import java.awt.*;
 

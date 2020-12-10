@@ -1,6 +1,6 @@
 package docmanagement.server;
 
-import docmanagement.server.data.ServerData;
+import docmanagement.server.data.DataProcessing;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -29,7 +29,7 @@ public class Server {
     }
 
     private final ThreadPoolExecutor threadPool;
-    private final ServerData serverData;
+    private final DataProcessing dataProcessing;
 
     Server(){
         threadPool = new ThreadPoolExecutor(
@@ -37,12 +37,12 @@ public class Server {
                 new LinkedBlockingQueue<Runnable>(QUEUE_CONNECT_NUMBER));
         threadPool.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 
-        serverData = new ServerData();
+        dataProcessing = new DataProcessing();
 
         try(var accept = new ServerSocket(PORT)){
             for(;;){
                 var socket = accept.accept();
-                threadPool.execute(new ConnectHandler(socket, serverData));
+                threadPool.execute(new ConnectHandler(socket, dataProcessing));
             }
         }catch (IOException e){
             e.printStackTrace();

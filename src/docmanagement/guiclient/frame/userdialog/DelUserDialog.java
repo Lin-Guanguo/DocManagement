@@ -1,7 +1,7 @@
 package docmanagement.guiclient.frame.userdialog;
 
 import docmanagement.guiclient.GUIClient;
-import docmanagement.guiclient.frame.DialogBuilder;
+import docmanagement.guiclient.frame.tool.DialogBuilder;
 import docmanagement.shared.requestandmessage.DelUserMessage;
 import docmanagement.shared.requestandmessage.DelUserRequest;
 

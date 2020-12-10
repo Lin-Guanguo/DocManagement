@@ -2,7 +2,7 @@ package docmanagement.guiclient.frame.userdialog;
 
 
 import docmanagement.guiclient.GUIClient;
-import docmanagement.guiclient.frame.DialogBuilder;
+import docmanagement.guiclient.frame.tool.DialogBuilder;
 import docmanagement.shared.User;
 import docmanagement.shared.requestandmessage.ModifyUserMessage;
 import docmanagement.shared.requestandmessage.ModifyUserRequest;

@@ -1,12 +1,12 @@
 package docmanagement.guiclient.frame;
 
 import docmanagement.guiclient.background.FileTask;
+import docmanagement.guiclient.frame.tool.GBC;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Future;
 
 public class FileProgress extends JPanel {
     public static final int DEFAULT_DISTANCE = 10;

@@ -4,6 +4,9 @@ import docmanagement.guiclient.GUIClient;
 import docmanagement.guiclient.frame.filedialog.DelFileDialog;
 import docmanagement.guiclient.frame.filedialog.DownloadFileDialog;
 import docmanagement.guiclient.frame.filedialog.UploadFileDialog;
+import docmanagement.guiclient.frame.table.FileListTable;
+import docmanagement.guiclient.frame.table.UserListTable;
+import docmanagement.guiclient.frame.tool.GBC;
 import docmanagement.guiclient.frame.userdialog.AddUserDialog;
 import docmanagement.guiclient.frame.userdialog.ChangePasswordDialog;
 import docmanagement.guiclient.frame.userdialog.DelUserDialog;
@@ -25,13 +28,11 @@ public class OperateFrame extends JFrame {
 
     private JPanel userManagementPanel = null;
     private JPanel userManagementButtonPanel = null;
-    private ManagementTable userTable = null;
     private JButton userTableFlushButton = null;
 
     private JPanel fileManagementPanel = null;
     private JPanel fileManagementButtonPanel = null;
     private FileProgress fileProgressPanel = null;
-    private ManagementTable fileTable = null;
     private JButton fileTableFlushButton = null;
 
     private final GUIClient client;
@@ -156,7 +157,7 @@ public class OperateFrame extends JFrame {
 
     private void listUserHandler(){
         createUserManagementPanel();
-        userTable = new ManagementTable(ManagementTable.TableType.USER_TABLE);
+        var userTable = new UserListTable();
         var scrollPane = new JScrollPane(userTable);
         scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "用户信息"));
         userManagementPanel.add(scrollPane, new GBC().setInsets(DEFAULT_DISTANCE)
@@ -211,7 +212,7 @@ public class OperateFrame extends JFrame {
         createFileManagementPanel();
         var uploadButton = new JButton(ServerOperation.UPLOAD_FILE.show());
         fileManagementButtonPanel.add(uploadButton,
-                new GBC(0,0));
+                new GBC(GridBagConstraints.RELATIVE,0));
         var uploadFileDialog = new UploadFileDialog(client);
         uploadButton.addActionListener(event-> uploadFileDialog.display());
     }
@@ -220,7 +221,7 @@ public class OperateFrame extends JFrame {
         createFileManagementPanel();
         var downloadButton = new JButton(ServerOperation.DOWNLOAD_FILE.show());
         fileManagementButtonPanel.add(downloadButton,
-                new GBC(1,0));
+                new GBC(GridBagConstraints.RELATIVE,0));
         var downloadFileDialog = new DownloadFileDialog(client);
         downloadButton.addActionListener(event-> downloadFileDialog.display());
     }
@@ -229,14 +230,14 @@ public class OperateFrame extends JFrame {
         createFileManagementPanel();
         var delFileButton = new JButton(ServerOperation.DEL_FILE.show());
         fileManagementButtonPanel.add(delFileButton,
-                new GBC(2,0));
+                new GBC(GridBagConstraints.RELATIVE,0));
         var delFileDialog = new DelFileDialog(client);
         delFileButton.addActionListener(event-> delFileDialog.display());
     }
 
     private void listFilesHandler(){
         createFileManagementPanel();
-        fileTable = new ManagementTable(ManagementTable.TableType.FILE_TABLE);
+        var fileTable = new FileListTable();
         var scrollPane = new JScrollPane(fileTable);
         scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),"文件信息"));
         fileManagementPanel.add(scrollPane,
@@ -244,7 +245,8 @@ public class OperateFrame extends JFrame {
                         .setFill(GridBagConstraints.BOTH));
 
         fileTableFlushButton = new JButton("刷新");
-        fileManagementButtonPanel.add(fileTableFlushButton, new GBC(4,0));
+        fileManagementButtonPanel.add(fileTableFlushButton,
+                new GBC(GridBagConstraints.RELATIVE,0));
         fileTableFlushButton.addActionListener(event ->{
             var message = (ListFileMessage)client.connectToServer(
                     new ListFileRequest(client.getUser()));

@@ -1,17 +1,11 @@
 package docmanagement.guiclient.frame.filedialog;
 
 import docmanagement.guiclient.GUIClient;
-import docmanagement.guiclient.background.FileTask;
-import docmanagement.guiclient.frame.DialogBuilder;
+import docmanagement.guiclient.frame.tool.DialogBuilder;
 import docmanagement.shared.requestandmessage.DelFileMessage;
 import docmanagement.shared.requestandmessage.DelFileRequest;
-import docmanagement.shared.requestandmessage.DownloadFileMessage;
-import docmanagement.shared.requestandmessage.DownloadFileRequest;
 
 import javax.swing.*;
-import java.io.BufferedOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class DelFileDialog extends DialogBuilder {
     public DelFileDialog(GUIClient client) {
