@@ -12,11 +12,11 @@ public class DialogBuilder extends JDialog {
     public static final int DEFAULT_DISTANCE = 10;
     public static final int DEFAULT_TEXT_WIDTH = 15;
 
-    private ArrayList<Object> input = new ArrayList<>();
+    private final ArrayList<Object> input = new ArrayList<>();
     private int lineCounter = 0;
     private int maxWidth = 0;
 
-    protected ActionListener CLOSE_DIALOG = e -> {this.setVisible(false);};
+    protected ActionListener CLOSE_DIALOG = e -> this.setVisible(false);
 
     protected DialogBuilder(String title){
         this.setTitle(title);

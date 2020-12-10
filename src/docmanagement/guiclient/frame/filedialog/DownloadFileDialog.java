@@ -31,7 +31,7 @@ public class DownloadFileDialog extends DialogBuilder {
                     this.setVisible(false);
                     var task = new FileTask("Download " + "id: " +id) {
                         @Override
-                        protected Void doInBackground() throws Exception {
+                        protected Void doInBackground(){
                             client.connectToServer(new DownloadFileRequest(client.getUser(), id),
                                     (message, socketIn, socketOut) -> {
                                         if (message.isOk()) {

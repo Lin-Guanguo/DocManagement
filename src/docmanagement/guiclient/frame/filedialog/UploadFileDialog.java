@@ -52,7 +52,7 @@ public class UploadFileDialog extends DialogBuilder {
                     this.setVisible(false);
                     var task = new FileTask("Upload " + "id: " +id){
                         @Override
-                        protected Void doInBackground() throws Exception {
+                        protected Void doInBackground() {
                             client.connectToServer(new UploadFileRequest(client.getUser(), toUp),
                                     (message, socketIn, socketOut) -> {
                                         if (message.isOk()) {
@@ -80,7 +80,7 @@ public class UploadFileDialog extends DialogBuilder {
                             return null;
                         }
                     };
-                    var future = client.getBackgroundExecutor().submitFileTask(task);
+                    client.getBackgroundExecutor().submitFileTask(task);
                     client.getOperateFrame().getFileProgressPanel().addProgress(task);
                 },
                 CLOSE_DIALOG);

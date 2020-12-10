@@ -1,6 +1,5 @@
 package docmanagement.guiclient.frame.table;
 
-import docmanagement.shared.Doc;
 import docmanagement.shared.User;
 
 import javax.swing.*;
