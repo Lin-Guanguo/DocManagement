@@ -32,8 +32,9 @@ public class OperateFrame extends JFrame {
 
     private JPanel fileManagementPanel = null;
     private JPanel fileManagementButtonPanel = null;
-    private FileProgress fileProgressPanel = null;
     private JButton fileTableFlushButton = null;
+
+    private FileProgress fileProgressPanel = null;
 
     private final GUIClient client;
 
