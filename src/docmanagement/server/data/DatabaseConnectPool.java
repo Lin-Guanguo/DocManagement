@@ -24,6 +24,7 @@ import java.util.logging.Logger;
  * 自制简易数据库连接池
  * 缓存数据库连接，60~120秒未使用则关闭
  */
+@SuppressWarnings("AlibabaAvoidUseTimer")
 public class DatabaseConnectPool implements DataSource {
     static final String DATABASE_DRIVER;
     static final String DATABASE_URL;

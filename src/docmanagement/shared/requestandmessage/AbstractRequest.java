@@ -15,6 +15,10 @@ public abstract class AbstractRequest implements Serializable {
         return user;
     }
 
+    /**
+     * 用以确定子类的类型
+     * @return 代表请求类型的枚举值
+     */
     abstract public ServerOperation getType();
 
     @Override

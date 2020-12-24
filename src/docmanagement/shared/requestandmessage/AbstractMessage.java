@@ -13,6 +13,10 @@ abstract public class AbstractMessage implements Serializable {
         return isOk;
     }
 
+    /**
+     * 用以确定子类的类型
+     * @return 代表消息类型的枚举值
+     */
     abstract public ServerOperation getType();
 
     @Override

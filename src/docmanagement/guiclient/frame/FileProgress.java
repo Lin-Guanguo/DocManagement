@@ -8,6 +8,7 @@ import java.awt.*;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+@SuppressWarnings("AlibabaAvoidUseTimer")
 public class FileProgress extends JPanel {
     public static final int DEFAULT_DISTANCE = 10;
 

@@ -25,7 +25,9 @@ public class UploadFileDialog extends DialogBuilder {
                     int id;
                     try{
                         id = Integer.parseInt(getText(0));
-                        if(id < 0) throw new NumberFormatException();
+                        if(id < 0) {
+                            throw new NumberFormatException();
+                        }
                     }catch (NumberFormatException e){
                         JOptionPane.showMessageDialog(this,"id格式错误","上传文件", JOptionPane.WARNING_MESSAGE);
                         return;
