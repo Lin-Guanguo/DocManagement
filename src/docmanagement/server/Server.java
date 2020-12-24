@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Timestamp;
 import java.util.Properties;
 import java.util.concurrent.*;
 
@@ -42,6 +43,10 @@ public class Server {
         try(var accept = new ServerSocket(PORT)){
             for(;;){
                 var socket = accept.accept();
+
+                System.out.println(socket.getRemoteSocketAddress() +
+                        " : connect, " + new Timestamp(System.currentTimeMillis()).toString());
+
                 threadPool.execute(new ConnectHandler(socket, dataProcessing));
             }
         }catch (IOException e){

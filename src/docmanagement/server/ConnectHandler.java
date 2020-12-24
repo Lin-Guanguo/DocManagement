@@ -51,8 +51,8 @@ public class ConnectHandler implements Runnable {
             }
 
             System.out.println(socket.getRemoteSocketAddress() +
-                    " : " + request.getType().show() +
-                    ", time = " + new Timestamp(System.currentTimeMillis()).toString());
+                    " : " + request.getType().show());
+
             switch (request.getType()){
                 case LOGIN_CHECK -> loginCheckHandler();
                 case GET_PERMISSION -> getPermissionHandler();
@@ -82,6 +82,8 @@ public class ConnectHandler implements Runnable {
         } finally {
             try {
                 socket.close();
+                System.out.println(socket.getRemoteSocketAddress() +
+                        " : close");
             } catch (IOException e) {
                 System.err.println("socket关闭异常");
             }

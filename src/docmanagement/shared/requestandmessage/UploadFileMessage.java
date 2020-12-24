@@ -7,6 +7,6 @@ public class UploadFileMessage extends AbstractMessage {
 
     @Override
     public ServerOperation getType() {
-        return null;
+        return ServerOperation.UPLOAD_FILE;
     }
 }
