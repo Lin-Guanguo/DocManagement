@@ -30,13 +30,6 @@ public class Test {
             System.out.println("socket close");
         }*/
 
-        var selector = Selector.open();
-        selector.selectedKeys();
-        selector.select();
-        Socket socket;
-        var channel = socket.getChannel();
-        channel.configureBlocking(false);
-        channel.register(selector, SelectionKey.OP_READ);
     }
 }
 

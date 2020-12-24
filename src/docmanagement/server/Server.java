@@ -33,9 +33,7 @@ public class Server {
     private final DataProcessing dataProcessing;
 
     Server(){
-        threadPool = new ThreadPoolExecutor(
-                CONNECT_THREAD_NUMBER, CONNECT_THREAD_NUMBER, 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(QUEUE_CONNECT_NUMBER));
+        threadPool = ServerThreadPoolFactory.newThreadPool(CONNECT_THREAD_NUMBER, QUEUE_CONNECT_NUMBER);
         threadPool.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 
         dataProcessing = new DataProcessing();
