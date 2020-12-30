@@ -1,16 +1,16 @@
 package docmanagement.guiclient.frame;
 
 import docmanagement.guiclient.GUIClient;
-import docmanagement.guiclient.frame.filedialog.DelFileDialog;
-import docmanagement.guiclient.frame.filedialog.DownloadFileDialog;
-import docmanagement.guiclient.frame.filedialog.UploadFileDialog;
+import docmanagement.guiclient.frame.dialog.DelFileDialog;
+import docmanagement.guiclient.frame.dialog.DownloadFileDialog;
+import docmanagement.guiclient.frame.dialog.UploadFileDialog;
 import docmanagement.guiclient.frame.table.FileListTable;
 import docmanagement.guiclient.frame.table.UserListTable;
 import docmanagement.guiclient.frame.tool.GBC;
-import docmanagement.guiclient.frame.userdialog.AddUserDialog;
-import docmanagement.guiclient.frame.userdialog.ChangePasswordDialog;
-import docmanagement.guiclient.frame.userdialog.DelUserDialog;
-import docmanagement.guiclient.frame.userdialog.ModifyUserDialog;
+import docmanagement.guiclient.frame.dialog.AddUserDialog;
+import docmanagement.guiclient.frame.dialog.ChangePasswordDialog;
+import docmanagement.guiclient.frame.dialog.DelUserDialog;
+import docmanagement.guiclient.frame.dialog.ModifyUserDialog;
 import docmanagement.shared.requestandmessage.*;
 
 import javax.swing.*;
@@ -91,6 +91,8 @@ public class OperateFrame extends JFrame {
                 new GBC(0,0));
         personalInfoPanel.add(new JLabel("  身份: " + user.getRole().toString()),
                 new GBC(0,1));
+        personalInfoPanel.add(new JLabel("服务器IP：" + GUIClient.host),
+                new GBC(0, 2));
         personalInfoPanel.add(personalInfoButtonPanel,
                 new GBC(0,5)
                         .setFill(GridBagConstraints.HORIZONTAL)

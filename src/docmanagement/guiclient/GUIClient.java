@@ -1,7 +1,7 @@
 package docmanagement.guiclient;
 
 import docmanagement.guiclient.background.BackgroundExecutor;
-import docmanagement.guiclient.frame.userdialog.LoginDialog;
+import docmanagement.guiclient.frame.dialog.LoginDialog;
 import docmanagement.guiclient.frame.OperateFrame;
 import docmanagement.shared.User;
 import docmanagement.shared.requestandmessage.*;

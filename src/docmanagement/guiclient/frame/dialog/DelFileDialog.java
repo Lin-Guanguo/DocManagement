@@ -1,4 +1,4 @@
-package docmanagement.guiclient.frame.filedialog;
+package docmanagement.guiclient.frame.dialog;
 
 import docmanagement.guiclient.GUIClient;
 import docmanagement.guiclient.frame.tool.DialogBuilder;

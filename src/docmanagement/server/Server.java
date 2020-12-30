@@ -29,13 +29,9 @@ public class Server {
         FILE_PATH = properties.getProperty("filepath");
     }
 
-    private final ThreadPoolExecutor threadPool;
-    private final DataProcessing dataProcessing;
-
     Server(){
-        threadPool = ServerThreadPoolFactory.newThreadPool(CONNECT_THREAD_NUMBER, QUEUE_CONNECT_NUMBER);
-
-        dataProcessing = new DataProcessing();
+        var dataProcessing = new DataProcessing();
+        var threadPool = ServerThreadPoolFactory.newThreadPool(CONNECT_THREAD_NUMBER, QUEUE_CONNECT_NUMBER);
 
         try(var accept = new ServerSocket(PORT)){
             for(;;){
