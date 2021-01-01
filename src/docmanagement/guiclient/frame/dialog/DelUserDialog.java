@@ -20,7 +20,12 @@ public class DelUserDialog extends DialogBuilder {
                 if(message.isOk()){
                     JOptionPane.showMessageDialog(this, "删除成功");
                     this.setVisible(false);
-                    client.getOperateFrame().userTableFlush();
+                    if(name.equals(client.getUser().getName())){
+                        JOptionPane.showMessageDialog(this, "请重新登陆");
+                        client.switchUser();
+                    }else{
+                        client.getOperateFrame().userTableFlush();
+                    }
                 }else{
                     JOptionPane.showMessageDialog(this, "删除失败");
                 }
