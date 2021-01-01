@@ -110,7 +110,12 @@ public class GUIClient {
         return backgroundExecutor;
     }
 
-    public static void main(String[] args){
-        new GUIClient();
+    public static void main(String[] args) throws InterruptedException {
+        Thread t = new Thread(GUIClient::new);
+        Thread t2 = new Thread(GUIClient::new);
+        t.start();
+        t2.start();
+        t.join();
+        t2.join();
     }
 }
